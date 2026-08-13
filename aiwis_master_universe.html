@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Universo AIWIS | Master Architecture Dossier</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0a0b10;
+      --bg-card: rgba(20, 22, 35, 0.6);
+      --text-main: #f0f2f8;
+      --text-muted: #8a93aa;
+      --accent-cyan: #00f2fe;
+      --accent-blue: #4facfe;
+      --accent-purple: #8e2de2;
+      --accent-green: #00f260;
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --font-head: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+    
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Background Gradients */
+    .bg-blobs {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden;
+    }
+    .blob {
+      position: absolute; filter: blur(150px); opacity: 0.4; border-radius: 50%;
+      animation: float 20s infinite alternate ease-in-out;
+    }
+    .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-purple); }
+    .blob-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: var(--accent-blue); animation-delay: -10s; }
+    .blob-3 { top: 40%; left: 40%; width: 40vw; height: 40vw; background: var(--accent-cyan); opacity: 0.2; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(100px, 100px) scale(1.2); }
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed; top: 0; width: 100%; padding: 20px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(10, 11, 16, 0.8); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border); z-index: 100;
+    }
+    .logo {
+      font-family: var(--font-head); font-weight: 900; font-size: 24px;
+      background: linear-gradient(45deg, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+    }
+    .nav-links { display: flex; gap: 30px; }
+    .nav-links a {
+      color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 14px;
+      transition: color 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .nav-links a:hover { color: var(--accent-cyan); }
+
+    /* Sections */
+    section {
+      min-height: 100vh; padding: 120px 10% 80px; display: flex; flex-direction: column; justify-content: center;
+      position: relative;
+    }
+    
+    .section-title {
+      font-family: var(--font-head); font-size: 3rem; font-weight: 800; margin-bottom: 20px;
+      background: linear-gradient(to right, #fff, #a0a0a0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .section-subtitle {
+      font-size: 1.2rem; color: var(--accent-cyan); margin-bottom: 40px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: var(--bg-card); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border); border-radius: 24px;
+      padding: 40px; margin-bottom: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .glass-panel:hover {
+      transform: translateY(-5px); box-shadow: 0 40px 80px rgba(0,242,254,0.1);
+      border-color: rgba(0, 242, 254, 0.3);
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+    }
+    .grid-2.reverse { direction: rtl; }
+    .grid-2.reverse > * { direction: ltr; }
+
+    /* Typography inside panels */
+    h3 { font-family: var(--font-head); font-size: 2rem; margin-bottom: 15px; color: #fff; }
+    p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 20px; }
+    ul { list-style: none; margin-bottom: 20px; }
+    ul li { position: relative; padding-left: 25px; margin-bottom: 10px; color: var(--text-main); }
+    ul li::before {
+      content: '▹'; position: absolute; left: 0; color: var(--accent-cyan); font-weight: bold;
+    }
+
+    /* Images */
+    .mockup-img {
+      width: 100%; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      border: 1px solid var(--glass-border); transition: transform 0.5s ease;
+    }
+    .mockup-img:hover { transform: scale(1.02); }
+
+    /* The Matrix Data Flow (Decorative) */
+    .data-flow {
+      height: 4px; width: 100%; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; margin: 30px 0;
+    }
+    .data-flow::after {
+      content: ''; display: block; height: 100%; width: 20%;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+      animation: data-stream 2s infinite linear;
+    }
+    @keyframes data-stream {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(500%); }
+    }
+
+    /* Interactive Tooltips (Hotspots) */
+    .hotspot-container { position: relative; display: inline-block; width: 100%; }
+    .hotspot {
+      position: absolute; width: 24px; height: 24px; background: var(--accent-cyan);
+      border-radius: 50%; cursor: pointer; box-shadow: 0 0 15px var(--accent-cyan);
+      animation: pulse 2s infinite; z-index: 10;
+    }
+    .hotspot::after {
+      content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
+      border: 2px solid var(--accent-cyan); border-radius: 50%; opacity: 0;
+      animation: ripple 2s infinite;
+    }
+    .tooltip {
+      position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%) scale(0.9);
+      background: rgba(10,11,16,0.95); border: 1px solid var(--accent-cyan);
+      padding: 15px; border-radius: 8px; width: 250px; color: #fff; font-size: 13px;
+      opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 100;
+      backdrop-filter: blur(10px); pointer-events: none;
+    }
+    .hotspot:hover .tooltip { opacity: 1; visibility: visible; transform: translateX(-50%) scale(1); }
+
+    @keyframes pulse { 0% { transform: scale(0.95); } 50% { transform: scale(1.1); } 100% { transform: scale(0.95); } }
+    @keyframes ripple { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+  </style>
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="logo">AIWIS UNIVERSE</div>
+    <div class="nav-links">
+      <a href="#argos">Master OS</a>
+      <a href="#coremigrate">Mainframe</a>
+      <a href="#aiwis-studio">Studio</a>
+      <a href="#cloud-data">Cloud Data</a>
+      <a href="#neural-infra">Neural Infra</a>
+      <a href="#aix-ecosystem">AIX Hub</a>
+    </div>
+  </nav>
+
+  <!-- 1. Master OS -->
+  <section id="argos">
+    <div class="section-subtitle">El Orquestador Central</div>
+    <h1 class="section-title">ArgOS Master OS</h1>
+    
+    <div class="grid-2">
+      <div class="glass-panel">
+        <h3>El Sistema Operativo Definitivo</h3>
+        <p>ArgOS no es una simple aplicación; es el cerebro maestro. Unifica todos los procesos de migración, gestión de datos, ofimática y analítica IA en un único ecosistema de control (Single Pane of Glass).</p>
+        <ul>
+          <li><strong>Capa 5 (IA Generativa):</strong> Análisis profundo y automatizado.</li>
+          <li><strong>Gobierno de Datos 360°:</strong> Trazabilidad desde el origen hasta el cloud.</li>
+          <li><strong>Módulos Desacoplados:</strong> Arquitectura plug-and-play.</li>
+        </ul>
+        <div class="data-flow"></div>
+        <p style="font-size: 0.9rem;">Integración total con Ecosistema AIWIS.</p>
+      </div>
+      
+      <div class="hotspot-container">
+        <!-- Using previous argos dashboard mockup -->
+        <img src="file:///C:/Users/USER/.gemini/antigravity/brain/00a8a902-b450-413f-82ef-9b5e9663d7e9/argos_dashboard_mockup_1784225556577.png" class="mockup-img" alt="ArgOS Dashboard">
+        <div class="hotspot" style="top: 20%; left: 30%;">
+          <div class="tooltip"><strong>Gobernanza</strong><br>Control absoluto de roles, permisos y pipelines de migración.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. COREmigrate AI -->
+  <section id="coremigrate">
+    <div class="section-subtitle">Mundo Legacy Bancario</div>
+    <h1 class="section-title">COREmigrate AI</h1>
+    
+    <div class="grid-2 reverse">
+      <div class="glass-panel">
+        <h3>La Evolución del Mainframe</h3>
+        <p>Transformamos el oscuro mundo del código heredado (COBOL, JCL, Control-M) en interfaces modernas. Simulamos ecosistemas IBM Z enteros directamente en el navegador.</p>
+        <ul>
+          <li><strong>Vista Clásica Emulada:</strong> Simulación píxel a píxel del Enterprise Manager antiguo para cero fricción.</li>
+          <li><strong>Análisis VIBE COBOL:</strong> Agentes IA que documentan y refactorizan código a demanda.</li>
+          <li><strong>Mallas de Dependencia:</strong> Graficación interactiva de Jobs y Control-M.</li>
+        </ul>
+        <div class="data-flow" style="background: rgba(0,242,96,0.1);"><div style="background: linear-gradient(90deg, transparent, var(--accent-green), transparent); width: 20%; height: 100%; animation: data-stream 2.5s infinite linear;"></div></div>
+      </div>
+      
+      <div class="hotspot-container">
+        <img src="file:///C:/Users/USER/.gemini/antigravity/brain/00a8a902-b450-413f-82ef-9b5e9663d7e9/argos_tn3270_mockup_1784227414765.png" class="mockup-img" alt="TN3270 Simulator">
+        <div class="hotspot" style="top: 50%; left: 75%; background: var(--accent-green); box-shadow: 0 0 15px var(--accent-green);">
+          <div class="tooltip"><strong>Simulador TN3270</strong><br>Conexión legacy sin latencia, interceptada por el analizador semántico de IA.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. AIWIS STUDIO -->
+  <section id="aiwis-studio">
+    <div class="section-subtitle">Mundo Ofimático</div>
+    <h1 class="section-title">AIWIS Studio</h1>
+    
+    <div class="grid-2">
+      <div class="glass-panel">
+        <h3>Visual AI Studio (Migrador de Macros)</h3>
+        <p>La revolución de la ofimática. AIWIS Studio orquesta la migración masiva de código legado (Macros VBA de Excel) hacia la modernidad de Google Workspace y Apps Script.</p>
+        <ul>
+          <li><strong>23 Motores de Análisis:</strong> Pipeline de conversión determinista.</li>
+          <li><strong>Traducción Asistida por IA:</strong> Gemini interviene en lógica compleja no determinable.</li>
+          <li><strong>Arnés de Paridad:</strong> Pruebas automáticas (Golden files) que certifican la exactitud del código resultante.</li>
+        </ul>
+        <div class="data-flow" style="background: rgba(142,45,226,0.1);"><div style="background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); width: 20%; height: 100%; animation: data-stream 1.8s infinite linear;"></div></div>
+      </div>
+      
+      <div class="hotspot-container">
+        <img src="file:///C:/Users/USER/.gemini/antigravity/brain/00a8a902-b450-413f-82ef-9b5e9663d7e9/aiwis_studio_mockup_1784240210025.png" class="mockup-img" alt="AIWIS Studio Mockup">
+        <div class="hotspot" style="top: 40%; left: 50%; background: var(--accent-purple); box-shadow: 0 0 15px var(--accent-purple);">
+          <div class="tooltip"><strong>Motor de Conversión</strong><br>VBA Legacy a Google Apps Script asistido por IA generativa en tiempo real.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Data Engines & Cloud -->
+  <section id="cloud-data">
+    <div class="section-subtitle">Migración de Bases de Datos</div>
+    <h1 class="section-title">Cloud & Data Engines</h1>
+    
+    <div class="grid-2 reverse">
+      <div class="glass-panel">
+        <h3>Teradata, Sybase & UNIX al Cloud</h3>
+        <p>Rompiendo los silos de datos monolíticos. Orquestamos la migración de arquitecturas rígidas hacia entornos Data Lakehouse hiper-escalables.</p>
+        <ul>
+          <li><strong>Transformación DDL/DML:</strong> Conversión automatizada de esquemas Teradata/Sybase/SQL a Databricks/Snowflake.</li>
+          <li><strong>Shell UNIX a Cloud-Native:</strong> Reescritura de scripts BASH heredados a pipelines orquestados (Airflow, dbt).</li>
+          <li><strong>Data Lineage:</strong> Rastreo absoluto del dato durante el tránsito.</li>
+        </ul>
+        <div class="data-flow"></div>
+      </div>
+      
+      <div class="hotspot-container">
+        <img src="file:///C:/Users/USER/.gemini/antigravity/brain/00a8a902-b450-413f-82ef-9b5e9663d7e9/cloud_data_mockup_1784240232844.png" class="mockup-img" alt="Cloud Data Migration">
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Neural Infra -->
+  <section id="neural-infra">
+    <div class="section-subtitle">Hardware & Modelos Privados</div>
+    <h1 class="section-title">AIWIS Neural Infra</h1>
+    
+    <div class="grid-2">
+      <div class="glass-panel">
+        <h3>Soberanía y Privacidad Total</h3>
+        <p>Para la banca y la gran empresa, la privacidad no es opcional. AIWIS Neural Infra es nuestra red de clusters de GPUs NVIDIA locales para ejecutar modelos de Inteligencia Artificial privados.</p>
+        <ul>
+          <li><strong>Modelos Locales Open-Weight:</strong> Ejecución nativa de Gemma 4, Ollama y Llama-3.</li>
+          <li><strong>Zero Data Leakage:</strong> Ningún dato sale de la infraestructura del cliente. Operación "Air-Gapped".</li>
+          <li><strong>Fine-Tuning In-House:</strong> Modelos pre-entrenados con el propio código corporativo (JCL, VBA, COBOL) para máxima precisión.</li>
+        </ul>
+        <div class="data-flow" style="background: rgba(0,242,96,0.1);"><div style="background: linear-gradient(90deg, transparent, var(--accent-green), transparent); width: 20%; height: 100%; animation: data-stream 2.2s infinite linear;"></div></div>
+      </div>
+      
+      <div class="hotspot-container">
+        <img src="file:///C:/Users/USER/.gemini/antigravity/brain/00a8a902-b450-413f-82ef-9b5e9663d7e9/neural_infra_mockup_1784240245597.png" class="mockup-img" alt="Neural Infra Server Room">
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. AIX Ecosystem -->
+  <section id="aix-ecosystem">
+    <div class="section-subtitle">La Guinda de la Torta</div>
+    <h1 class="section-title">El Ecosistema AIWIX (AIX)</h1>
+    
+    <div class="grid-2 reverse">
+      <div class="glass-panel">
+        <h3>El Asistente Omnipresente</h3>
+        <p>Inspirado en el mítico J.A.R.V.I.S., <strong>AIX</strong> es un ecosistema agnóstico y mutante. Un círculo omnipresente flotante en tu escritorio que controla a un ejército de agentes hiper-especializados.</p>
+        <ul>
+          <li><strong>AiwisHub:</strong> El bus central de mensajería (SQLite + SSE). El cerebro conectivo.</li>
+          <li><strong>El Cubo 3D AIWIX:</strong> Interfaz flotante nativa que permite ver métricas, integración con GitHub/Vercel y controlar a los agentes.</li>
+          <li><strong>Raix y Rubix:</strong> Agentes (Raix) que operan como las manos del usuario, conectados al motor RAG masivo de conocimiento (Rubix).</li>
+          <li><strong>Agnóstico al Modelo:</strong> No apostamos a un LLM; AIX sobrevive a todos. Usa Claude, Gemini o locales (Neural Infra) según la tarea.</li>
+        </ul>
+        <div class="data-flow" style="background: rgba(0,242,254,0.1);"><div style="background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); width: 20%; height: 100%; animation: data-stream 1.5s infinite linear;"></div></div>
+      </div>
+      
+      <div class="hotspot-container">
+        <img src="file:///C:/Users/USER/.gemini/antigravity/brain/00a8a902-b450-413f-82ef-9b5e9663d7e9/aiwix_ecosystem_mockup_1784240260775.png" class="mockup-img" alt="AIWIX Ecosystem">
+        <div class="hotspot" style="top: 30%; left: 45%;">
+          <div class="tooltip"><strong>El Círculo AIX</strong><br>Siempre presente, escuchando, orquestando sub-agentes Raix.</div>
+        </div>
+        <div class="hotspot" style="top: 60%; left: 65%; background: var(--accent-purple); box-shadow: 0 0 15px var(--accent-purple);">
+          <div class="tooltip"><strong>El Cubo AIWIX</strong><br>Dashboard flotante 3D que conecta directamente con AiwisHub.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
